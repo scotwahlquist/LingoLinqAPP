@@ -9,7 +9,7 @@ import utterance from './utterance';
 import app_state from './app_state';
 import Utils from './misc';
 import i18n from './i18n';
-import SweetSuite from '../app';
+import LingoLinqAAC from '../app';
 
 var helpers = {
   "I": ['really', 'have', 'did'],

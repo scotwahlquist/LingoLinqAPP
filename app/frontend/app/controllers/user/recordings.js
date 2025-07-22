@@ -4,7 +4,7 @@ import capabilities from '../../utils/capabilities';
 import contentGrabbers from '../../utils/content_grabbers';
 import modal from '../../utils/modal';
 import Utils from '../../utils/misc';
-import SweetSuite from '../../app';
+import LingoLinqAAC from '../../app';
 import { computed } from '@ember/object';
 
 export default Controller.extend({

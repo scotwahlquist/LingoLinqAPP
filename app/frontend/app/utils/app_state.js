@@ -17,7 +17,7 @@ import stashes from './_stashes';
 import boundClasses from './bound_classes';
 import utterance from './utterance';
 import modal from './modal';
-import SweetSuite from '../app';
+import LingoLinqAAC from '../app';
 import contentGrabbers from './content_grabbers';
 import editManager from './edit_manager';
 import buttonTracker from './raw_events';
@@ -56,11 +56,11 @@ var app_state = EmberObject.extend({
     this.set('geolocation', geolocation);
     this.set('installed_app', capabilities.installed_app);
     this.set('no_linky', capabilities.installed_app && capabilities.system == 'iOS');
-    this.set('licenseOptions', SweetSuite.licenseOptions);
+    this.set('licenseOptions', LingoLinqAAC.licenseOptions);
     this.set('device_name', capabilities.readable_device_name);
     var settings = window.domain_settings || {};
-    settings.app_name = SweetSuite.app_name || settings.app_name || "SweetSuite";
-    settings.company_name = SweetSuite.company_name || settings.company_name || "SweetSuite";
+    settings.app_name = LingoLinqAAC.app_name || settings.app_name || "LingoLinq-AAC";
+    settings.company_name = LingoLinqAAC.company_name || settings.company_name || "LingoLinq-AAC";
     this.set('domain_settings', settings);
     this.set('currentBoardState', null);
     var _this = this;
@@ -212,31 +212,31 @@ var app_state = EmberObject.extend({
     this.set('browser', capabilities.browser);
     this.set('system', capabilities.system);
     contentGrabbers.boardGrabber.transitioner = route;
-    SweetSuite.controller = controller;
+    LingoLinqAAC.controller = controller;
     stashes.controller = controller;
     boundClasses.setup();
 //    controller.set('model', EmberObject.create());
     utterance.setup(controller);
     this.speak_mode_handlers();
     this.dom_changes_on_board_state_change();
-    SweetSuite.session = route.get('session');
+    LingoLinqAAC.session = route.get('session');
     modal.close();
     if(session.get('access_token')) {
       // this shouldn't run until the db is initialized, otherwise if the user is offline
       // or has a spotty connection, then looking up the user will not succeed, and
       // the app will force a logout unexpectedly.
       var find_user = function(last_try) {
-        var find = SweetSuite.store.findRecord('user', 'self');
+        var find = LingoLinqAAC.store.findRecord('user', 'self');
 
         find.then(function(user) {
           console.log("user initialization working..");
           var valid_user = RSVP.resolve(user);
           if(!session.get('as_user_id') && session.get('user_id') && session.get('user_id') != user.get('id')) {
             // mismatch due to a user being renamed
-            valid_user = SweetSuite.store.findRecord('user', session.get('user_id'));
+            valid_user = LingoLinqAAC.store.findRecord('user', session.get('user_id'));
           } else if(session.get('as_user_id') && user.get('user_name') && session.get('as_user_id') != user.get('user_name')) {
             // mismatch due to a user being renamed
-            valid_user = SweetSuite.store.findRecord('user', session.get('as_user_id'));
+            valid_user = LingoLinqAAC.store.findRecord('user', session.get('as_user_id'));
           }
           valid_user.then(function(user) {
             if(!user.get('fresh') && stashes.get('online')) {
@@ -251,7 +251,7 @@ var app_state = EmberObject.extend({
 
             if(stashes.get('speak_mode_user_id') || stashes.get('referenced_speak_mode_user_id')) {
               var ref_id = stashes.get('speak_mode_user_id') || stashes.get('referenced_speak_mode_user_id');
-              SweetSuite.store.findRecord('user', ref_id).then(function(user) {
+              LingoLinqAAC.store.findRecord('user', ref_id).then(function(user) {
                 if(stashes.get('speak_mode_user_id')) {
                   app_state.set('speakModeUser', user);
                 }
@@ -312,7 +312,7 @@ var app_state = EmberObject.extend({
     }
     if(_this.get('currentUser') && _this.get('currentUser').reload) {
       _this.get('currentUser').reload().then(function() {
-        if(capabilities.installed_app && capabilities.system == 'iOS' && _this.get('currentUser.subscription.plan_id') == 'SweetSuiteiOSMonthly' && !_this.get('currentUser.checked_iap')) {
+        if(capabilities.installed_app && capabilities.system == 'iOS' && _this.get('currentUser.subscription.plan_id') == 'LingoLinqAAC-iOSMonthly' && !_this.get('currentUser.checked_iap')) {
           _this.set('currentUser.checked_iap', true);
           // TODO: API call that triggers Purchasing.verify_receipt for the user
           // and reloads again on success
@@ -349,7 +349,7 @@ var app_state = EmberObject.extend({
     if(transition.to_route == 'board.index') {
       boundClasses.setup();
       var delay = app_state.get('currentUser.preferences.board_jump_delay') || window.user_preferences.any_user.board_jump_delay;
-      SweetSuite.log.track('global transition handled');
+      LingoLinqAAC.log.track('global transition handled');
       runLater(this, this.check_for_board_readiness, delay, 50);
     }
     var controller = this.controller;
@@ -393,7 +393,7 @@ var app_state = EmberObject.extend({
         }
       } catch(e) { }
     }
-    if(SweetSuite.embedded && !this.get('speak_mode')) {
+    if(LingoLinqAAC.embedded && !this.get('speak_mode')) {
       if(window.top && window.top != window.self) {
         window.top.location.replace(window.location);
       }
@@ -404,7 +404,7 @@ var app_state = EmberObject.extend({
     if(window._trackJs) {
       window._trackJs.disabled = protect_user;
     }
-    SweetSuite.protected_user = protect_user;
+    LingoLinqAAC.protected_user = protect_user;
     stashes.persist('protected_user', protect_user);
   }),
   set_root_board_state: observer('set_as_root_board_state', 'currentBoardState', function() {

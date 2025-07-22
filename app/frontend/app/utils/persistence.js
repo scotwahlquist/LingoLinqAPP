@@ -8,8 +8,8 @@ import {
 } from '@ember/runloop';
 import $ from 'jquery';
 import RSVP from 'rsvp';
-import SweetSuite from '../app';
-import sweetSuiteExtras from './extras';
+import LingoLinqAAC from '../app';
+import lingoLinqAACExtras from './extras';
 import stashes from './_stashes';
 import speecher from './speecher';
 import i18n from './i18n';
@@ -32,7 +32,7 @@ var persistence = EmberObject.extend({
       persistence.set('last_sync_at', res.last_sync);
       persistence.set('sync_stamps', res.stamps);
     }, function() { });
-    sweetSuiteExtras.addObserver('ready', function() {
+    lingoLinqAACExtras.addObserver('ready', function() {
       persistence.find('settings', 'lastSync').then(function(res) {
         persistence.set('last_sync_at', res.last_sync);
         persistence.set('sync_stamps', res.stamps);
@@ -42,7 +42,7 @@ var persistence = EmberObject.extend({
     });
     var ignore_big_log_change = false;
     stashes.addObserver('big_logs', function() {
-      if(sweetSuiteExtras && sweetSuiteExtras.ready && !ignore_big_log_change) {
+      if(lingoLinqAACExtras && lingoLinqAACExtras.ready && !ignore_big_log_change) {
         var rnd_key = (new Date()).getTime() + "_" + Math.random();
         persistence.find('settings', 'bigLogs').then(null, function(err) {
           return RSVP.resvole({});
@@ -76,8 +76,8 @@ var persistence = EmberObject.extend({
         persistence.check_for_needs_sync(true);
       }, 10 * 1000);
     }
-    sweetSuiteExtras.advance.watch('device', function() {
-      if(!SweetSuite.ignore_filesystem) {
+    lingoLinqAACExtras.advance.watch('device', function() {
+      if(!LingoLinqAAC.ignore_filesystem) {
         capabilities.storage.status().then(function(res) {
           if(res.available && !res.requires_confirmation) {
             res.allowed = true;
@@ -109,7 +109,7 @@ var persistence = EmberObject.extend({
     keys.forEach(function(key) { hash[key] = true; });
     // Look in the in-memory store for matching records, mark them
     // as not missing if found
-    SweetSuite.store.peekAll(store).map(function(i) { return i; }).forEach(function(item) {
+    LingoLinqAAC.store.peekAll(store).map(function(i) { return i; }).forEach(function(item) {
       if(item) {
         var record = item;
         if(record && hash[record.get('id')]) {
@@ -126,15 +126,15 @@ var persistence = EmberObject.extend({
     keys.forEach(function(key) { if(hash[key] === true) { any_missing = true; } });
     if(any_missing) {
       return new RSVP.Promise(function(resolve, reject) {
-        return sweetSuiteExtras.storage.find_all(store, keys).then(function(list) {
+        return lingoLinqAACExtras.storage.find_all(store, keys).then(function(list) {
           list.forEach(function(item) {
             if(item.data && item.data.id && hash[item.data.id]) {
               hash[item.data.id] = false;
               // Only push to the memory cache if it's not already in
               // there, otherwise it might get overwritten if there
               // is a pending persistence.
-              if(SweetSuite.store) {
-                var existing = SweetSuite.store.peekRecord(store, item.data.raw.id);
+              if(LingoLinqAAC.store) {
+                var existing = LingoLinqAAC.store.peekRecord(store, item.data.raw.id);
                 persistence.validate_board(existing, item.data.raw);
                 var json_api = { data: {
                   id: item.data.raw.id,
@@ -144,7 +144,7 @@ var persistence = EmberObject.extend({
                 if(existing) {
                   res[item.data.id] = existing;
                 } else {
-                  res[item.data.id] = SweetSuite.store.push(json_api);
+                  res[item.data.id] = LingoLinqAAC.store.push(json_api);
                 }
               }
             }
@@ -169,19 +169,19 @@ var persistence = EmberObject.extend({
     if(persistence.important_ids) {
       return RSVP.resolve(persistence.important_ids);
     } else {
-      return sweetSuiteExtras.storage.find('settings', 'importantIds').then(function(res) {
+      return lingoLinqAACExtras.storage.find('settings', 'importantIds').then(function(res) {
         persistence.important_ids = res.raw.ids || [];
         return persistence.important_ids;
       });
     }
   },
   find: function(store, key, wrapped, already_waited) {
-    if(!window.sweetSuiteExtras || !window.sweetSuiteExtras.ready) {
+    if(!window.lingoLinqExtras || !window.lingoLinqExtras.ready) {
       if(already_waited) {
         return RSVP.reject({error: "extras not ready"});
       } else {
         return new RSVP.Promise(function(resolve, reject) {
-          sweetSuiteExtras.advance.watch('all', function() {
+          lingoLinqAACExtras.advance.watch('all', function() {
             resolve(persistence.find(store, key, wrapped, true));
           });
         });
@@ -201,12 +201,12 @@ var persistence = EmberObject.extend({
         }
         var id = RSVP.resolve(key);
         if(store == 'user' && key == 'self') {
-          id = sweetSuiteExtras.storage.find('settings', 'selfUserId').then(function(res) {
+          id = lingoLinqAACExtras.storage.find('settings', 'selfUserId').then(function(res) {
             return res.raw.id;
           });
         }
         var lookup = id.then(function(id) {
-          return sweetSuiteExtras.storage.find(store, id).then(function(record) {
+          return lingoLinqAACExtras.storage.find(store, id).then(function(record) {
             return persistence.get_important_ids().then(function(ids) {
               return RSVP.resolve({record: record, importantIds: ids});
             }, function(err) {
@@ -294,22 +294,22 @@ var persistence = EmberObject.extend({
           board_ids.push(board.id);
         });
 
-        var find_local = sweetSuiteExtras.storage.find_all(store, board_ids).then(function(list) {
+        var find_local = lingoLinqAACExtras.storage.find_all(store, board_ids).then(function(list) {
           var res = [];
           list.forEach(function(item) {
             if(item.data && item.data.id) {
               // Only push to the memory cache if it's not already in
               // there, otherwise it might get overwritten if there
               // is a pending persistence.
-              if(SweetSuite.store) {
-                var existing = SweetSuite.store.peekRecord('board', item.data.raw.id);
+              if(LingoLinqAAC.store) {
+                var existing = LingoLinqAAC.store.peekRecord('board', item.data.raw.id);
                 if(!existing) {
                   var json_api = { data: {
                     id: item.data.raw.id,
                     type: 'board',
                     attributes: item.data.raw
                   }};
-                  res.push(SweetSuite.store.push(json_api));
+                  res.push(LingoLinqAAC.store.push(json_api));
                 } else {
                   res.push(existing);
                 }
@@ -353,14 +353,14 @@ var persistence = EmberObject.extend({
     }
   },
   find_changed: function() {
-    if(!window.sweetSuiteExtras || !window.sweetSuiteExtras.ready) {
+    if(!window.lingoLinqExtras || !window.lingoLinqExtras.ready) {
       return RSVP.resolve([]);
     }
-    return sweetSuiteExtras.storage.find_changed();
+    return lingoLinqAACExtras.storage.find_changed();
   },
   find_boards: function(str) {
     var re = new RegExp("\\b" + str, 'i');
-    var get_important_ids =  sweetSuiteExtras.storage.find('settings', 'importantIds').then(function(res) {
+    var get_important_ids =  lingoLinqAACExtras.storage.find('settings', 'importantIds').then(function(res) {
       return RSVP.resolve(res.raw.ids);
     });
 
@@ -377,7 +377,7 @@ var persistence = EmberObject.extend({
     var get_boards = get_board_ids.then(function(ids) {
       var promises = [];
       var boards = [];
-      var loaded_boards = SweetSuite.store.peekAll('board');
+      var loaded_boards = LingoLinqAAC.store.peekAll('board');
       ids.forEach(function(id) {
         var loaded_board = loaded_boards.findBy('id', id);
         if(loaded_board) {
@@ -389,7 +389,7 @@ var persistence = EmberObject.extend({
               type: 'board',
               attributes: res
             }};
-            var obj = SweetSuite.store.push(json_api);
+            var obj = LingoLinqAAC.store.push(json_api);
             boards.push(obj);
             return true;
           }));
@@ -421,11 +421,11 @@ var persistence = EmberObject.extend({
   remove: function(store, obj, key, log_removal) {
     var _this = this;
     this.removals = this.removals || [];
-    if(window.sweetSuiteExtras && window.sweetSuiteExtras.ready) {
+    if(window.lingoLinqAACExtras && window.lingoLinqAACExtras.ready) {
       runLater(function() {
         var record = obj[store] || obj;
         record.id = record.id || key;
-        var result = sweetSuiteExtras.storage.remove(store, record.id).then(function() {
+        var result = lingoLinqAACExtras.storage.remove(store, record.id).then(function() {
           return RSVP.resolve(obj);
         }, function(error) {
           return RSVP.reject(error);
@@ -433,7 +433,7 @@ var persistence = EmberObject.extend({
 
         if(log_removal) {
           result = result.then(function() {
-            return sweetSuiteExtras.storage.store('deletion', {store: store, id: record.id, storageId: (store + "_" + record.id)});
+            return lingoLinqAACExtras.storage.store('deletion', {store: store, id: record.id, storageId: (store + "_" + record.id)});
           });
         }
 
@@ -466,8 +466,8 @@ var persistence = EmberObject.extend({
       // when all the records can be looked up in the local store,
       // so I'm using timers for now. Luckily these lookups shouldn't
       // be very involved, especially once the record has been found.
-      if(SweetSuite.Board) {
-        runLater(SweetSuite.Board.refresh_data_urls, 2000);
+      if(LingoLinqAAC.Board) {
+        runLater(LingoLinqAAC.Board.refresh_data_urls, 2000);
       }
     }
   },
@@ -481,8 +481,8 @@ var persistence = EmberObject.extend({
         persistence.store.apply(persistence, args);
       } else if(persistence.refresh_after_eventual_stores.waiting) {
         persistence.refresh_after_eventual_stores.waiting = false;
-        if(SweetSuite.Board) {
-          SweetSuite.Board.refresh_data_urls();
+        if(LingoLinqAAC.Board) {
+          LingoLinqAAC.Board.refresh_data_urls();
         }
       }
     } catch(e) { }
@@ -496,7 +496,7 @@ var persistence = EmberObject.extend({
     var _this = this;
 
     return new RSVP.Promise(function(resolve, reject) {
-      if(sweetSuiteExtras && sweetSuiteExtras.ready) {
+      if(lingoLinqExtras && lingoLinqExtras.ready) {
         persistence.stores = persistence.stores || [];
         var promises = [];
         var store_method = eventually ? persistence.store_eventually : persistence.store;
@@ -514,7 +514,7 @@ var persistence = EmberObject.extend({
           record.changed = !!record.raw.changed;
 
 
-          var store_promise = sweetSuiteExtras.storage.store(store, record, key).then(function() {
+          var store_promise = lingoLinqExtras.storage.store(store, record, key).then(function() {
             if(store == 'user' && key == 'self') {
               return store_method('settings', {id: record.id}, 'selfUserId').then(function() {
                 return RSVP.resolve(record.raw);
@@ -676,11 +676,11 @@ var persistence = EmberObject.extend({
             persistence.bg_parse_json(atob(uri.split(/,/)[1])).then(function(json) {
               resolve(json);
             }, function(err) {
-              SweetSuite.track_error("No JSON dataURI");
+              LingoLinqAAC.track_error("No JSON dataURI");
               reject({error: "No JSON dataURI result"});  
             });
           } catch(e) {
-            SweetSuite.track_error("error parsing JSON data URI", e);
+            LingoLinqAAC.track_error("error parsing JSON data URI", e);
             reject({error: "Error parsing JSON dataURI"});
           }
         } else if(typeof(uri) == 'string' && uri.match(/^filesystem/) && capabilities.browser == 'Chrome') {
@@ -710,14 +710,14 @@ var persistence = EmberObject.extend({
               persistence.remove('dataCache', url);
               persistence.url_cache[url] = null;
             }
-            SweetSuite.track_error("JSON data retrieval error", (err || {}).error || err);
+            LingoLinqAAC.track_error("JSON data retrieval error", (err || {}).error || err);
             reject(err);
           });
         } else {
           resolve(uri);
         }
       }, function(err) {
-        SweetSuite.track_error("JSON DATA find_url error", (err || {}).error || err);
+        LingoLinqAAC.track_error("JSON DATA find_url error", (err || {}).error || err);
         reject(err);
       });
     });
@@ -863,7 +863,7 @@ var persistence = EmberObject.extend({
   },
   prime_caches: function(check_file_system) {
     var now = (new Date()).getTime();
-    console.log("SWEETSUITE: priming caches", check_file_system);
+    console.log("LINGOLINQ-AAC: priming caches", check_file_system);
     var _this = this;
     _this.url_cache = _this.url_cache || {};
     _this.url_uncache = _this.url_uncache || {};
@@ -875,7 +875,7 @@ var persistence = EmberObject.extend({
     if(_this.get('local_system.available') && _this.get('local_system.allowed') && stashes.get('auth_settings')) {
     } else {
       _this.primed = true;
-      console.log("SWEETSUITE: done priming caches", check_file_system, (new Date()).getTime() - now);
+      console.log("LINGOLINQ-AAC: done priming caches", check_file_system, (new Date()).getTime() - now);
       return RSVP.reject({error: 'not enabled or no user set'});
     }
     runLater(function() {
@@ -903,7 +903,7 @@ var persistence = EmberObject.extend({
       }, function(err) { rej(err); });
     }));
     var res = RSVP.all_wait(prime_promises).then(function() {
-      return sweetSuiteExtras.storage.find_all('dataCache').then(function(list) {
+      return lingoLinqExtras.storage.find_all('dataCache').then(function(list) {
         var promises = [];
         list.forEach(function(item) {
           if(item.data && item.data.raw && item.data.raw.url && item.data.raw.type && item.data.raw.local_filename) {
@@ -1019,9 +1019,9 @@ var persistence = EmberObject.extend({
           }
         });
       }
-      console.log("SWEETSUITE: done priming caches", check_file_system, (new Date()).getTime() - now);
+      console.log("LINGOLINQ-AAC: done priming caches", check_file_system, (new Date()).getTime() - now);
     }, function() { 
-      console.log("SWEETSUITE: done priming caches", check_file_system, (new Date()).getTime() - now);
+      console.log("LINGOLINQ-AAC: done priming caches", check_file_system, (new Date()).getTime() - now);
       _this.primed = true; 
     });
     return res;
@@ -1411,9 +1411,9 @@ var persistence = EmberObject.extend({
     return promise;
   },
   sync: function(user_id, force, ignore_supervisees, sync_reason) {
-    if(!window.sweetSuiteExtras || !window.sweetSuiteExtras.ready) {
+    if(!window.lingoLinqExtras || !window.lingoLinqExtras.ready) {
       return new RSVP.Promise(function(wait_resolve, wait_reject) {
-        sweetSuiteExtras.advance.watch('all', function() {
+        lingoLinqExtras.advance.watch('all', function() {
           wait_resolve(persistence.sync(user_id, force, ignore_supervisees, sync_reason));
         });
       });
@@ -1614,7 +1614,7 @@ var persistence = EmberObject.extend({
         var sync_promises = [];
 
         // Step 0: If extras isn't ready then there's nothing else to do
-        if(!window.sweetSuiteExtras || !window.sweetSuiteExtras.ready) {
+        if(!window.lingoLinqExtras || !window.lingoLinqExtras.ready) {
           sync_promises.push(RSVP.reject({error: "extras not ready"}));
         }
         if(!capabilities.db) {

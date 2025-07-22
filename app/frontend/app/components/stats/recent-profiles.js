@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import SweetSuite from '../../app';
+import LingoLinqAAC from '../../app';
 import i18n from '../../utils/i18n';
 import { observer } from '@ember/object';
 
@@ -13,7 +13,7 @@ export default Component.extend({
     var elem = this.get('element').getElementsByClassName('recent_profiles')[0];
 
     var _this = this;
-    SweetSuite.Visualizations.wait('pie-chart', function() {
+    LingoLinqAAC.Visualizations.wait('pie-chart', function() {
       if(elem && total) {
         var table = [
           ['Type', 'Total']

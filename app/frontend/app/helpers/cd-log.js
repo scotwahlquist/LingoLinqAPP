@@ -1,10 +1,10 @@
-import SweetSuite from '../app';
+import LingoLinqAAC from '../app';
 
 import { helper } from '@ember/component/helper';
 
 export default helper(function(params, hash) {
-  if(SweetSuite.log.started) {
-    SweetSuite.log.track(params[0]);
+  if(LingoLinqAAC.log.started) {
+    LingoLinqAAC.log.track(params[0]);
   } else {
     console.log(params[0]);
   }

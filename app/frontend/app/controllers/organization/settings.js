@@ -3,7 +3,7 @@ import modal from '../../utils/modal';
 import { computed, observer } from '@ember/object';
 import i18n from '../../utils/i18n';
 import { htmlSafe } from '@ember/string';
-import SweetSuite from '../../app';
+import LingoLinqAAC from '../../app';
 
 export default Controller.extend({
   opening: function() {
@@ -25,7 +25,7 @@ export default Controller.extend({
         name: i18n.t('loading', "Loading..."),
         pending: true
       });
-      SweetSuite.store.findRecord('organization', lookup_id).then(function(res) {
+      LingoLinqAAC.store.findRecord('organization', lookup_id).then(function(res) {
         if(lookup_id == _this.get('model.parent_org_id')) {
           _this.set('model.parent_org', {
             id: res.get('id'),

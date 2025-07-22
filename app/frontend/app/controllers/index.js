@@ -4,7 +4,7 @@ import EmberObject from '@ember/object';
 import { set as emberSet, get as emberGet } from '@ember/object';
 import { later as runLater } from '@ember/runloop';
 import $ from 'jquery';
-import SweetSuite from '../app';
+import LingoLinqAAC from '../app';
 import persistence from '../utils/persistence';
 import capabilities from '../utils/capabilities';
 import app_state from '../utils/app_state';
@@ -19,7 +19,7 @@ import { observer } from '@ember/object';
 import { computed } from '@ember/object';
 
 export default Controller.extend({
-  registration_types: SweetSuite.registrationTypes,
+  registration_types: LingoLinqAAC.registrationTypes,
   sync_able: computed('extras.ready', 'app_state.currentUser.external_device', function() {
     return this.get('extras.ready') && !app_state.get('currentUser.external_device');
   }),
@@ -334,7 +334,7 @@ export default Controller.extend({
           var eb = _this.earned_badge(for_users[emberGet(sup, 'id')]);
           emberSet(sup, 'earned_badge', eb);
         }
-        if(SweetSuite.remote_url(sup.avatar_url) && !sup.local_avatar_url) {
+        if(LingoLinqAAC.remote_url(sup.avatar_url) && !sup.local_avatar_url) {
           persistence.find_url(sup.avatar_url, 'image').then(function(url) {
             emberSet(sup, 'local_avatar_url', url);
           }, function(err) { });

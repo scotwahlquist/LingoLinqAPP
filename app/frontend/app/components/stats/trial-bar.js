@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 import $ from 'jquery';
-import SweetSuite from '../../app';
+import LingoLinqAAC from '../../app';
 import i18n from '../../utils/i18n';
 
 export default Component.extend({

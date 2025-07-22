@@ -1,11 +1,11 @@
 import DS from 'ember-data';
-import SweetSuite from '../app';
+import LingoLinqAAC from '../app';
 import speecher from '../utils/speecher';
 import persistence from '../utils/persistence';
 import Utils from '../utils/misc';
 import { computed } from '@ember/object';
 
-SweetSuite.Unit = DS.Model.extend({
+LingoLinqAAC.Unit = DS.Model.extend({
   settings: DS.attr('raw'),
   organization_id: DS.attr('string'),
   name: DS.attr('string'),
@@ -75,4 +75,4 @@ SweetSuite.Unit = DS.Model.extend({
   }
 });
 
-export default SweetSuite.Unit;
+export default LingoLinqAAC.Unit;

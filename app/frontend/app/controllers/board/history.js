@@ -1,5 +1,5 @@
 import Controller from '@ember/controller';
-import SweetSuite from '../../app';
+import LingoLinqAAC from '../../app';
 import Utils from '../../utils/misc';
 import { computed } from '@ember/object';
 import persistence from '../../utils/persistence';
@@ -12,7 +12,7 @@ export default Controller.extend({
     _this.set('loading', true);
     _this.set('rollback_status', null);
     _this.set('error', false);
-    SweetSuite.store.query('boardversion', {board_id: this.get('key')}).then(function(res) {
+    LingoLinqAAC.store.query('boardversion', {board_id: this.get('key')}).then(function(res) {
       _this.set('loading', false);
       _this.set('versions', res);
     }, function(err) {

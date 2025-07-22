@@ -12,15 +12,15 @@ import config from './config/environment';
 import capabilities from './utils/capabilities';
 import i18n from './utils/i18n';
 import persistence from './utils/persistence';
-import sweetSuiteExtras from './utils/extras';
+import lingoLinqExtras from './utils/extras';
 import { computed } from '@ember/object';
 
 window.onerror = function(msg, url, line, col, obj) {
-  SweetSuite.track_error(msg + " (" + url + "-" + line + ":" + col + ")", false);
+  LingoLinqAAC.track_error(msg + " (" + url + "-" + line + ":" + col + ")", false);
 };
 Ember.onerror = function(err) {
   if(err.stack) {
-    SweetSuite.track_error(err.message, err.stack);
+    LingoLinqAAC.track_error(err.message, err.stack);
   } else {
     if(err.fakeXHR && (err.fakeXHR.status == 400 || err.fakeXHR.status == 404 || err.fakeXHR.status === 0)) {
       // should already be logged via "ember ajax error"
@@ -29,10 +29,10 @@ Ember.onerror = function(err) {
     } else if(err._result && err._result.fakeXHR && (err._result.fakeXHR.status == 400 || err._result.fakeXHR.status == 404 || err._result.fakeXHR.status === 0)) {
       // should already be logged via "ember ajax error"
     } else {
-      SweetSuite.track_error(JSON.stringify(err), false);
+      LingoLinqAAC.track_error(JSON.stringify(err), false);
     }
   }
-  if(Ember.testing || SweetSuite.testing) {
+  if(Ember.testing || LingoLinqAAC.testing) {
     throw(err);
   }
 };
@@ -50,18 +50,18 @@ var customEvents = {
     'select': 'select'
 };
 
-var SweetSuite = EmberApplication.extend({
+var LingoLinqAAC = EmberApplication.extend({
   modulePrefix: config.modulePrefix,
   podModulePrefix: config.podModulePrefix,
   Resolver: Resolver,
   customEvents: customEvents,
   ready: function() {
-    SweetSuite.ready();
+    LingoLinqAAC.ready();
   }
 });
-SweetSuite.ready = function() {
-  if(SweetSuite.readying) { return; }
-  SweetSuite.readying = true;
+LingoLinqAAC.ready = function() {
+  if(LingoLinqAAC.readying) { return; }
+  LingoLinqAAC.readying = true;
   // remove the splash screen if showing
   if(capabilities.installed_app || (navigator && navigator.splashscreen && navigator.splashscreen.hide)) {
     var checkForFooter = function() {

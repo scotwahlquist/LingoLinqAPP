@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import SweetSuite from '../app';
+import LingoLinqAAC from '../app';
 import modal from '../utils/modal';
 import app_state from '../utils/app_state';
 import persistence from '../utils/persistence';

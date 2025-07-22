@@ -8,7 +8,7 @@ import capabilities from '../utils/capabilities';
 export default {
   name: 'session',
   initialize: function(app) {
-    window.SweetSuite.app = app;
+    window.LingoLinqAAC.app = app;
     session.setup(app);
     persistence.setup(app);
     stashes.connect(app);

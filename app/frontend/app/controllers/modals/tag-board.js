@@ -1,4 +1,4 @@
-import SweetSuite from '../../app';
+import LingoLinqAAC from '../../app';
 import modal from '../../utils/modal';
 import BoardHierarchy from '../../utils/board_hierarchy';
 import i18n from '../../utils/i18n';
