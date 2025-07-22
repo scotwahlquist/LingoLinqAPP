@@ -1,7 +1,7 @@
 ## LingoLinq-AAC - Every Voice Should Be Heard
 [![OpenAAC](https://www.openaac.org/images//OpenAAC-advocate-blue.svg)](https://www.openaac.org/advocates.html)
 
-LingoLinq-AAC is an open, web-based AAC (Augmentative and Alternative Communication) app. Basically
+LingoLinq-AAC, a fork of the Sweet-Suite AAC app, is an open, web-based AAC (Augmentative and Alternative Communication) app. Basically
 if people struggle getting their words out for whatever reason, they can use
 the speech synthesis engine on a computing device to "speak" for them. Sometimes
 they'll just type on a keyboard (think Stephen Hawking), but sometimes typing is too slow
