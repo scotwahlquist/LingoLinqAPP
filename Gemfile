@@ -79,4 +79,4 @@ end
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
 
-ruby "3.4.3"
+ruby "3.2.2"
