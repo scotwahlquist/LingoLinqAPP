@@ -4,7 +4,7 @@ import { set as emberSet, get as emberGet } from '@ember/object';
 import { later as runLater } from '@ember/runloop';
 import $ from 'jquery';
 import RSVP from 'rsvp';
-import SweetSuite from '../app';
+import LingoLinqAAC from '../app';
 import boundClasses from './bound_classes';
 import app_state from './app_state';
 import modal from './modal';
@@ -424,12 +424,12 @@ var Button = EmberObject.extend({
   everything_local: function() {
     if(this.image_id && this.image_url && persistence.url_cache && persistence.url_cache[this.image_url] && (!persistence.url_uncache || !persistence.url_uncache[this.image_url])) {
     } else if(this.image_id && !this.get('image')) {
-      var rec = SweetSuite.store.peekRecord('image', this.image_id);
+      var rec = LingoLinqAAC.store.peekRecord('image', this.image_id);
       if(!rec || !rec.get('isLoaded')) { /* console.log("missing image for", this.get('label')); */ return false; }
     }
     if(this.sound_id && this.sound_url && persistence.url_cache && persistence.url_cache[this.sound_url] && (!persistence.url_uncache || !persistence.url_uncache[this.sound_url])) {
     } else if(this.sound_id && !this.get('sound')) {
-      var rec = SweetSuite.store.peekRecord('sound', this.sound_id);
+      var rec = LingoLinqAAC.store.peekRecord('sound', this.sound_id);
       if(!rec || !rec.get('isLoaded')) { /* console.log("missing sound for", this.get('label')); */ return false; }
     }
     return true;
@@ -437,7 +437,7 @@ var Button = EmberObject.extend({
   load_image: function(preference) {
     var _this = this;
     if(!_this.image_id) { return RSVP.resolve(); }
-    var image = SweetSuite.store.peekRecord('image', _this.image_id);
+    var image = LingoLinqAAC.store.peekRecord('image', _this.image_id);
     if(image && (!image.get('isLoaded') || !image.get('best_url'))) { image = null; }
     if(preference == 'remote' && image && !image.get('permissions')) { image = null; }
     _this.set('image', image);
@@ -456,7 +456,7 @@ var Button = EmberObject.extend({
       var hc = (_this.get('board.hc_image_ids') || {})[_this.image_id];
       if(hc) { _this.set('hc_image', true); }
       if(image_urls && image_urls[_this.image_id] && preference != 'remote') {
-        var img = SweetSuite.store.createRecord('image', {
+        var img = LingoLinqAAC.store.createRecord('image', {
           url: image_urls[_this.image_id]
         })
         img.set('id', _this.image_id);
@@ -479,7 +479,7 @@ var Button = EmberObject.extend({
         if(!(_this.image_id || '').match(/^tmp/) && preference != 'remote') {
           console.error("had to revert to image record lookup");
         }
-        var find = SweetSuite.store.findRecord('image', _this.image_id).then(function(image) {
+        var find = LingoLinqAAC.store.findRecord('image', _this.image_id).then(function(image) {
           _this.set('image', image);
           if(image.get('incomplete')) {
             image.reload().then(function() {
@@ -509,7 +509,7 @@ var Button = EmberObject.extend({
   load_sound: function(preference) {
     var _this = this;
     if(!_this.sound_id) { return RSVP.resolve(); }
-    var sound = SweetSuite.store.peekRecord('sound', _this.sound_id);
+    var sound = LingoLinqAAC.store.peekRecord('sound', _this.sound_id);
     if(sound && (!sound.get('isLoaded') || !sound.get('best_url'))) { sound = null; }
     _this.set('sound', sound);
     var check_sound = function(sound) {
@@ -522,7 +522,7 @@ var Button = EmberObject.extend({
     if(!sound) {
       var sound_urls = _this.get('board.sound_urls');
       if(sound_urls && sound_urls[_this.sound_id] && preference != 'remote') {
-        var snd = SweetSuite.store.createRecord('sound', {
+        var snd = LingoLinqAAC.store.createRecord('sound', {
           url: sound_urls[_this.sound_id]
         })
         snd.set('id', _this.sound_id);

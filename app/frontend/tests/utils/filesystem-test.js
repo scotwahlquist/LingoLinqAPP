@@ -13,8 +13,8 @@ import RSVP from 'rsvp';
 import capabilities from '../../utils/capabilities';
 import persistence from '../../utils/persistence';
 import stashes from '../../utils/_stashes';
-import sweetSuiteExtras from '../../utils/extras';
-import SweetSuite from '../../app';
+import lingoLinqExtras from '../../utils/extras';
+import LingoLinq from '../../app';
 import { run as emberRun } from '@ember/runloop';
 
 describe("filesystem", function() {
@@ -22,13 +22,13 @@ describe("filesystem", function() {
     var file = {
       name: name,
       createWriter: function(success, error) {
-        if(SweetSuite.quota_settings.prevent_writer) {
+        if(LingoLinq.quota_settings.prevent_writer) {
           error("writer not allowed");
         } else {
           var writer = {
             write: function(blob) {
               file.blob = blob;
-              if(SweetSuite.quota_settings.error_on_write) {
+              if(LingoLinq.quota_settings.error_on_write) {
                 writer.onerror("write failed");
               } else {
                 writer.onwriteend("done!");
@@ -39,7 +39,7 @@ describe("filesystem", function() {
         }
       },
       remove: function(success, error) {
-        if(SweetSuite.quota_settings.prevent_remove) {
+        if(LingoLinq.quota_settings.prevent_remove) {
           error("remove not allowed");
         } else {
           file.parent.remove_child(file);
@@ -57,7 +57,7 @@ describe("filesystem", function() {
   var make_dir = function(name, children) {
     var dir = {
       getDirectory: function(key, opts, success, error) {
-        if(SweetSuite.quota_settings.prevent_directory_search) {
+        if(LingoLinq.quota_settings.prevent_directory_search) {
           error("lookup not allowed");
         } else {
           var res = null;
@@ -67,7 +67,7 @@ describe("filesystem", function() {
             }
           });
           if(!res && opts && opts.create) {
-            if(SweetSuite.quota_settings.prevent_directory_creation) {
+            if(LingoLinq.quota_settings.prevent_directory_creation) {
               error("creation not allowed");
             } else {
               res = make_dir(key);
@@ -82,7 +82,7 @@ describe("filesystem", function() {
         }
       },
       getFile: function(key, opts, success, error) {
-        if(SweetSuite.quota_settings.prevent_file_search) {
+        if(LingoLinq.quota_settings.prevent_file_search) {
           error("file lookup not allowed");
         } else {
           var res = null;
@@ -92,7 +92,7 @@ describe("filesystem", function() {
             }
           });
           if(!res && opts && opts.create) {
-            if(SweetSuite.quota_settings.prevent_file_creation) {
+            if(LingoLinq.quota_settings.prevent_file_creation) {
               error("file creation not allowed");
             } else {
               res = make_file(key);
@@ -109,7 +109,7 @@ describe("filesystem", function() {
       createReader: function() {
         return {
           readEntries: function(success, error) {
-            if(SweetSuite.quota_settings.prevent_directory_listing) {
+            if(LingoLinq.quota_settings.prevent_directory_listing) {
               error("listing not allowed");
             } else {
               success(dir.children);
@@ -143,7 +143,7 @@ describe("filesystem", function() {
     persistence.set('local_system', null);
   });
   beforeEach(function() {
-    SweetSuite.ignore_filesystem = false;
+    LingoLinq.ignore_filesystem = false;
     capabilities.cached_dirs = null;
     capabilities.root_dir_entry = null;
     persistence.sound_filename_cache = null;
@@ -151,7 +151,7 @@ describe("filesystem", function() {
     persistence.url_cache = null;
     if(window.PERSISTENT === undefined) { window.PERSISTENT = 1; }
     if(window.TEMPORARY === undefined) { window.TEMPORARY = 0; }
-    SweetSuite.quota_settings = {
+    LingoLinq.quota_settings = {
       allow_persistent: true,
       allow_persistent_quota: true,
       allow_temporary: true,

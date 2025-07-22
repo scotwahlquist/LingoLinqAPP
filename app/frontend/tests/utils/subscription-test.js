@@ -9,7 +9,7 @@ import {
   stub
 } from 'frontend/tests/helpers/jasmine';
 import { db_wait } from 'frontend/tests/helpers/ember_helper';
-import SweetSuite from 'frontend/app';
+import LingoLinqAAC from 'frontend/app';
 import Subscription from '../../utils/subscription';
 import persistence from '../../utils/persistence';
 import EmberObject from '@ember/object';
@@ -156,7 +156,7 @@ describe('subscription', function() {
       var s = Subscription.create();
       s.set('subscription_amount', 'monthly_6');
       expect(s.get('amount_in_cents')).toEqual(600);
-      expect(s.get('description')).toEqual("SweetSuite monthly subscription");
+      expect(s.get('description')).toEqual("LingoLinq-AAC monthly subscription");
       expect(s.get('subscription_plan_description')).toEqual('no plan');
       expect(s.get('purchase_description')).toEqual('Subscribe');
 
@@ -169,7 +169,7 @@ describe('subscription', function() {
       s.set('user_type', 'supporter');
       s.set('subscription_amount', 'slp_long_term_100');
       expect(s.get('amount_in_cents')).toEqual(10000);
-      expect(s.get('description')).toEqual("SweetSuite supporting-role 5-year purchase");
+      expect(s.get('description')).toEqual("LingoLinq-AAC supporting-role 5-year purchase");
       expect(s.get('subscription_plan_description')).toEqual('communicator monthly $3');
       expect(s.get('purchase_description')).toEqual('Purchase');
     });
@@ -179,7 +179,7 @@ describe('subscription', function() {
       var s = Subscription.create();
       s.set('subscription_amount', 'monthly_6');
       expect(s.get('amount_in_cents')).toEqual(600);
-      expect(s.get('description')).toEqual("SweetSuite monthly subscription");
+      expect(s.get('description')).toEqual("LingoLinq-AAC monthly subscription");
       expect(s.get('subscription_plan_description')).toEqual('no plan');
       s.set('user', {subscription: {never_expires: true}});
       expect(s.get('subscription_plan_description')).toEqual('free forever');
@@ -292,7 +292,7 @@ describe('subscription', function() {
         });
         var s = Subscription.create({user: u});
         expect(s.get('cheaper_offer')).toEqual(false);
-        stub(SweetSuite, 'sale', ((new Date()).getTime() / 1000) + 500);
+        stub(LingoLinqAAC, 'sale', ((new Date()).getTime() / 1000) + 500);
         s.reset();
         expect(s.get('sale')).toEqual(true);
         expect(s.get('cheaper_offer')).toEqual(true);
@@ -309,7 +309,7 @@ describe('subscription', function() {
         });
         var s = Subscription.create({user: u});
         expect(s.get('much_cheaper_offer')).toEqual(false);
-        stub(SweetSuite, 'sale', ((new Date()).getTime() / 1000) + 500);
+        stub(LingoLinqAAC, 'sale', ((new Date()).getTime() / 1000) + 500);
         s.reset();
         expect(s.get('sale')).toEqual(true);
         expect(s.get('much_cheaper_offer')).toEqual(true);
@@ -418,7 +418,7 @@ describe('subscription', function() {
 
   describe('subscription_types', function() {
     it('should flag communicators correctly before and after their trial expires', function() {
-      var user = SweetSuite.store.createRecord('user');
+      var user = LingoLinqAAC.store.createRecord('user');
       var exp = window.moment().add(6, 'day').toISOString();
       user.set('subscription', {expires: exp, free_premium: false, grace_period: true, fully_purchased: false});
       user.set('membership_type', 'premium');
@@ -478,7 +478,7 @@ describe('subscription', function() {
     });
 
     it('should flag supporters correctly before and after their trial expires', function() {
-      var user = SweetSuite.store.createRecord('user');
+      var user = LingoLinqAAC.store.createRecord('user');
       var exp = window.moment().add(6, 'day').toISOString();
       user.set('preferences', {role: 'supporter'});
       user.set('subscription', {expires: exp, free_premium: false, grace_period: true, fully_purchased: false});
@@ -552,7 +552,7 @@ describe('subscription', function() {
     });
 
     it('should flag long-term purchasers correctly', function() {
-      var user = SweetSuite.store.createRecord('user');
+      var user = LingoLinqAAC.store.createRecord('user');
       var exp = window.moment().add(6, 'day').toISOString();
       user.set('subscription', {expires: exp, free_premium: false, grace_period: true, active: true, purchased: true, plan_id: 'long_term_150'});
       user.set('membership_type', 'premium');
@@ -611,7 +611,7 @@ describe('subscription', function() {
     });
 
     it('should flag paid supporters correctly', function() {
-      var user = SweetSuite.store.createRecord('user');
+      var user = LingoLinqAAC.store.createRecord('user');
       var exp = window.moment().add(6, 'day').toISOString();
       user.set('subscription', {expires: exp, free_premium: false, grace_period: false, active: true, purchased: true, plan_id: 'slp_long_term_50'});
       user.set('preferences', {role: 'supporter'});
@@ -644,7 +644,7 @@ describe('subscription', function() {
     });
 
     it('should flag free supporters correctly', function() {
-      var user = SweetSuite.store.createRecord('user');
+      var user = LingoLinqAAC.store.createRecord('user');
       var exp = window.moment().add(6, 'day').toISOString();
       user.set('preferences', {role: 'supporter'});
       user.set('subscription', {expires: null, free_premium: true, grace_period: false, fully_purchased: false});
@@ -690,7 +690,7 @@ describe('subscription', function() {
     });
 
     it('should flag subscribers correctly', function() {
-      var user = SweetSuite.store.createRecord('user');
+      var user = LingoLinqAAC.store.createRecord('user');
       var exp = window.moment().add(6, 'day').toISOString();
       user.set('subscription', {expires: null, free_premium: false, grace_period: false, active: true, purchased: true, plan_id: 'monthly_6'});
       user.set('membership_type', 'premium');
@@ -763,7 +763,7 @@ describe('subscription', function() {
     });
 
     it('should flag org-sponsored users correctly', function() {
-      var user = SweetSuite.store.createRecord('user');
+      var user = LingoLinqAAC.store.createRecord('user');
       user.set('subscription', {active: true});
       user.set('membership_type', 'premium');
       expect(user.get('currently_premium')).toEqual(true);
@@ -795,7 +795,7 @@ describe('subscription', function() {
     });
 
     it('should flag never_expires users correctly', function() {
-      var user = SweetSuite.store.createRecord('user');
+      var user = LingoLinqAAC.store.createRecord('user');
       user.set('subscription', {active: true, never_expires: true});
       user.set('membership_type', 'premium');
       expect(user.get('currently_premium')).toEqual(true);
@@ -864,8 +864,8 @@ describe('subscription', function() {
         var res = Subscription.purchase(s);
         expect(res.then).toNotEqual(undefined);
         expect(open_args).toNotEqual(null);
-        expect(open_args.name).toEqual('SweetSuite');
-        expect(open_args.description).toEqual('SweetSuite monthly subscription');
+        expect(open_args.name).toEqual('LingoLinq-AAC');
+        expect(open_args.description).toEqual('LingoLinq-AAC monthly subscription');
         expect(open_args.amount).toEqual(600);
         expect(open_args.panelLabel).toEqual('Subscribe');
         expect(open_args.email).toEqual(undefined);

@@ -5,7 +5,7 @@ import app_state from '../utils/app_state';
 import i18n from '../utils/i18n';
 import contentGrabbers from '../utils/content_grabbers';
 import Utils from '../utils/misc';
-import SweetSuite from '../app';
+import LingoLinqAAC from '../app';
 import { htmlSafe } from '@ember/string';
 import editManager from '../utils/edit_manager';
 import { observer } from '@ember/object';
@@ -36,7 +36,7 @@ export default modal.ModalController.extend({
   closing: function() {
     contentGrabbers.avatar_result = null;
   },
-  avatar_examples: SweetSuite.avatarUrls.concat(SweetSuite.iconUrls),
+  avatar_examples: LingoLinqAAC.avatarUrls.concat(LingoLinqAAC.iconUrls),
   avatar_options: computed(
     'model.user.prior_avatar_urls',
     'model.user.fallback_avatar_url',
@@ -82,7 +82,7 @@ export default modal.ModalController.extend({
       _this.set('saving', true);
       editManager.get_edited_image().then(function(url) {
         var content_type = (url.split(/:/)[1] || "").split(/;/)[0];
-        var image = SweetSuite.store.createRecord('image', {
+        var image = LingoLinqAAC.store.createRecord('image', {
           url: url,
           content_type: content_type,
           width: contentGrabbers.pictureGrabber.default_size,

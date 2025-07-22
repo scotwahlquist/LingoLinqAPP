@@ -3,7 +3,7 @@ import { set as emberSet, get as emberGet } from '@ember/object';
 import { later as runLater } from '@ember/runloop';
 import $ from 'jquery';
 import RSVP from 'rsvp';
-import SweetSuite from '../app';
+import LingoLinqAAC from '../app';
 import stashes from './_stashes';
 import session from './session';
 import i18n from './i18n';
@@ -35,9 +35,9 @@ import app_state from './app_state';
       runLater(function() {
         session.get('isAuthenticated'); // this prevents a flash of unauthenticated content on ios
         $('html,body').scrollTop(0);
-        console.log("SWEETSUITE: ready to start");
-        SweetSuite.app.advanceReadiness();
-        SweetSuite.ready();
+        console.log("LINGOLINQ-AAC: ready to start");
+        LingoLinqAAC.app.advanceReadiness();
+        LingoLinqAAC.ready();
       });
     }
   };
@@ -63,20 +63,20 @@ import app_state from './app_state';
     enable: function() {
       if(this.get('ready')) { return; }
 
-      console_debug("SWEETSUITE: extras ready");
+      console_debug("LINGOLINQ-AAC: extras ready");
       if(window.app_version) {
-        console_debug("SWEETSUITE: app version " + window.app_version);
+        console_debug("LINGOLINQ-AAC: app version " + window.app_version);
       }
       this.set('ready', true);
       if(window.speechSynthesis) {
-        console_debug("SWEETSUITE: tts enabled");
+        console_debug("LINGOLINQ-AAC: tts enabled");
       }
       extras.advance('extras');
     },
     storage: {
       find: function(store, key) {
         var defer = RSVP.defer();
-        capabilities.invoke({type: 'sweetSuiteExtras', method: 'storage_find', options: {store: store, key: key}}).then(function(res) {
+        capabilities.invoke({type: 'lingoLinqAACExtras', method: 'storage_find', options: {store: store, key: key}}).then(function(res) {
           defer.resolve(res);
         }, function(err) {
           defer.reject(err);
@@ -85,7 +85,7 @@ import app_state from './app_state';
       },
       find_all: function(store, ids) {
         var defer = RSVP.defer();
-        capabilities.invoke({type: 'sweetSuiteExtras', method: 'storage_find_all', options: {store: store, ids: ids}}).then(function(res) {
+        capabilities.invoke({type: 'lingoLinqAACExtras', method: 'storage_find_all', options: {store: store, ids: ids}}).then(function(res) {
           defer.resolve(res);
         }, function(err) {
           defer.reject(err);
@@ -94,7 +94,7 @@ import app_state from './app_state';
       },
       find_changed: function() {
         var defer = RSVP.defer();
-        capabilities.invoke({type: 'sweetSuiteExtras', method: 'storage_find_changed', options: {}}).then(function(res) {
+        capabilities.invoke({type: 'lingoLinqAACExtras', method: 'storage_find_changed', options: {}}).then(function(res) {
           defer.resolve(res);
         }, function(err) {
           defer.reject(err);
@@ -103,7 +103,7 @@ import app_state from './app_state';
       },
       store: function(store, obj, key) {
         var defer = RSVP.defer();
-        capabilities.invoke({type: 'sweetSuiteExtras', method: 'storage_store', options: {store: store, record: obj}}).then(function(res) {
+        capabilities.invoke({type: 'lingoLinqAACExtras', method: 'storage_store', options: {store: store, record: obj}}).then(function(res) {
           defer.resolve(res);
         }, function(err) {
           defer.reject(err);
@@ -112,7 +112,7 @@ import app_state from './app_state';
       },
       remove: function(store, id) {
         var defer = RSVP.defer();
-        capabilities.invoke({type: 'sweetSuiteExtras', method: 'storage_remove', options: {store: store, record_id: id}}).then(function(res) {
+        capabilities.invoke({type: 'lingoLinqAACExtras', method: 'storage_remove', options: {store: store, record_id: id}}).then(function(res) {
           defer.resolve(res);
         }, function(err) {
           defer.reject(err);
@@ -121,7 +121,7 @@ import app_state from './app_state';
       }
     },
     track_error: function(message) {
-      SweetSuite.track_error(message);
+      LingoLinqAAC.track_error(message);
     }
   }).create();
   capabilities.device_id = function() {
@@ -212,7 +212,7 @@ import app_state from './app_state';
         if(capabilities.access_token) {
           options.headers['Authorization'] = "Bearer " + capabilities.access_token;
           options.headers['X-Device-Id'] = capabilities.device_id();
-          options.headers['X-SweetSuite-Version'] = window.SweetSuite.VERSION;
+          options.headers['X-LingoLinq-AAC-Version'] = window.LingoLinqAAC.VERSION;
         }
         if(SweetSuite.protected_user || stashes.get('protected_user')) {
           options.headers['X-SILENCE-LOGGER'] = 'true';

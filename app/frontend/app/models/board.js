@@ -6,7 +6,7 @@ import {
 import RSVP from 'rsvp';
 import $ from 'jquery';
 import DS from 'ember-data';
-import SweetSuite from '../app';
+import LingoLinqAAC from '../app';
 import i18n from '../utils/i18n';
 import persistence from '../utils/persistence';
 import modal from '../utils/modal';
@@ -27,7 +27,7 @@ import { set as emberSet } from '@ember/object';
 import EmberObject from '@ember/object';
 import utterance from '../utils/utterance';
 
-SweetSuite.Board = DS.Model.extend({
+LingoLinqAAC.Board = DS.Model.extend({
   didLoad: function() {
     this.checkForDataURL().then(null, function() { });
     this.check_for_copy();
@@ -157,19 +157,19 @@ SweetSuite.Board = DS.Model.extend({
     });
     if(!skin || skin == 'default') { return local_map; }
 
-    var which_skin = SweetSuite.Board.which_skinner(skin);
+    var which_skin = LingoLinqAAC.Board.which_skinner(skin);
 
     var res = {};
     for(var key in local_map) {
       if(key && local_map[key]) {
-        var url = SweetSuite.Board.skinned_url(local_map[key], which_skin);
+        var url = LingoLinqAAC.Board.skinned_url(local_map[key], which_skin);
         // Use the un-skinned address if it's all that's in the cache
         if(!persistence.url_cache[url] && persistence.url_cache[local_map[key]] && (!persistence.url_uncache || !persistence.url_uncache[local_map[key]])) {
           url = local_map[key];
         }
         res[key] = url;
         if(unskins[key]) {
-          url = SweetSuite.Board.skinned_url(local_map[key], which_skin, true);
+          url = LingoLinqAAC.Board.skinned_url(local_map[key], which_skin, true);
           if(!persistence.url_cache[url] && persistence.url_cache[local_map[key]] && (!persistence.url_uncache || !persistence.url_uncache[local_map[key]])) {
             url = local_map[key];
           }
@@ -233,7 +233,7 @@ SweetSuite.Board = DS.Model.extend({
     return res;
   },
   local_images_with_license: computed('grid', 'buttons', function() {
-    var images = SweetSuite.store.peekAll('image');
+    var images = LingoLinqAAC.store.peekAll('image');
     var result = [];
     var missing = false;
     var fallbacks = this.get('fallback_images') || [];
@@ -246,7 +246,7 @@ SweetSuite.Board = DS.Model.extend({
             if(fb && fb.license) {
               image.set('license', fb.license);
             } else {
-              SweetSuite.store.findRecord('image', button.image_id).then(function(img) {
+              LingoLinqAAC.store.findRecord('image', button.image_id).then(function(img) {
                 image.set('license', img.get('license'));
               });    
             }
@@ -254,7 +254,7 @@ SweetSuite.Board = DS.Model.extend({
           result.push(image);
           var need_reload = [];
           (image.get('alternates') || []).forEach(function(alternate) {
-            var img = SweetSuite.store.createRecord('image')
+            var img = LingoLinqAAC.store.createRecord('image')
             img.set('url', alternate.url);
             img.set('library', alternate.library);
             if(!alternate.license) {
@@ -311,7 +311,7 @@ SweetSuite.Board = DS.Model.extend({
     return res;
   },
   local_sounds_with_license: computed('grid', 'buttons', function() {
-    var sounds = SweetSuite.store.peekAll('sound');
+    var sounds = LingoLinqAAC.store.peekAll('sound');
     var result = [];
     var missing = false;
     var fallbacks = this.get('fallback_sounds') || [];
@@ -324,7 +324,7 @@ SweetSuite.Board = DS.Model.extend({
             if(fb && fb.license) {
               sound.set('license', fb.license);
             } else {
-              SweetSuite.store.findRecord('sound', button.sound_id).then(function(snd) {
+              LingoLinqAAC.store.findRecord('sound', button.sound_id).then(function(snd) {
                 sound.set('license', snd.get('license'));
               });    
 
@@ -808,7 +808,7 @@ SweetSuite.Board = DS.Model.extend({
       if(this.get('editable_source_key') && this.get('editable_source.key') != this.get('editable_source_key')) {
         var _this = this;
         var key = _this.get('editable_source_key');
-        SweetSuite.store.findRecord('board', key).then(function(board) {
+        LingoLinqAAC.store.findRecord('board', key).then(function(board) {
           if(_this.get('editable_source_key') == key) {
             _this.set('editable_source', board);
           }
@@ -824,7 +824,7 @@ SweetSuite.Board = DS.Model.extend({
     return false;
   }),
   create_copy: function(user, make_public, swap_library, new_owner, disconnect) {
-    var board = SweetSuite.store.createRecord('board', {
+    var board = LingoLinqAAC.store.createRecord('board', {
       parent_board_id: this.get('id'),
       key: this.get('key').split(/\//)[1],
       name: this.get('copy_name') || this.get('name'),
@@ -931,7 +931,7 @@ SweetSuite.Board = DS.Model.extend({
     // reload or fetch them remotely to get the latest, updated version,
     // which will include the "my copy" information.
     var do_reloads = app_state.get('board_reloads') || {};
-    SweetSuite.store.peekAll('board').map(function(i) { return i; }).forEach(function(brd) {
+    LingoLinqAAC.store.peekAll('board').map(function(i) { return i; }).forEach(function(brd) {
       if(brd && affected_board_ids && affected_board_ids.indexOf(brd.get('id')) != -1) {
         if(!brd.get('isLoading') && !brd.get('isNew') && !brd.get('isDeleted')) {
           do_reloads[brd.get('id')] = true;
@@ -967,7 +967,7 @@ SweetSuite.Board = DS.Model.extend({
     this.set('checked_for_data_url', true);
     var url = this.get('icon_url_with_fallback');
     var _this = this;
-    if(!this.get('image_data_uri') && SweetSuite.remote_url(url)) {
+    if(!this.get('image_data_uri') && LingoLinqAAC.remote_url(url)) {
       return persistence.find_url(url, 'image').then(function(data_uri) {
         _this.set('image_data_uri', data_uri);
         return _this;

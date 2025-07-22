@@ -4,7 +4,7 @@ import i18n from '../utils/i18n';
 import obf from '../utils/obf';
 import emergency from '../utils/obf-emergency';
 import persistence from '../utils/persistence';
-import SweetSuite from '../app';
+import LingoLinqAAC from '../app';
 import { later as runLater } from '@ember/runloop';
 import { computed, observer, set as emberSet } from '@ember/object';
 

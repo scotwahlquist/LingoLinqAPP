@@ -2,11 +2,11 @@ import EmberObject from '@ember/object';
 import RSVP from 'rsvp';
 import DS from 'ember-data';
 import Ember from 'ember';
-import SweetSuite from '../app';
+import LingoLinqAAC from '../app';
 import speecher from '../utils/speecher';
 import persistence from '../utils/persistence';
 import app_state from '../utils/app_state';
-import sweetSuiteExtras from '../utils/extras';
+import lingoLinqExtras from '../utils/extras';
 import editManager from '../utils/edit_manager';
 import progress_tracker from '../utils/progress_tracker';
 import capabilities from '../utils/capabilities';
@@ -21,7 +21,7 @@ import BoardHierarchy from '../utils/board_hierarchy';
 import { observer } from '@ember/object';
 import { computed } from '@ember/object';
 
-SweetSuite.User = DS.Model.extend({
+LingoLinqAAC.User = DS.Model.extend({
   didLoad: function() {
     this.checkForDataURL().then(null, function() { });
     if(this.get('preferences') && !this.get('preferences.stretch_buttons')) {
@@ -216,7 +216,7 @@ SweetSuite.User = DS.Model.extend({
     var device_id = this.get('external_device.device_id') || 'na';
     var vocab_id = this.get('external_device.vocab_id') || 'na';
     var res = {};
-    var device = SweetSuite.User.devices.find(function(dev) { return dev.id == device_id; });
+    var device = LingoLinqAAC.User.devices.find(function(dev) { return dev.id == device_id; });
     var vocab = ((device || {vocabs: []}).vocabs || []).find(function(voc) { return voc.id == vocab_id; });
     if(device && device.img) {
       res.device_url = Ember.templateHelpers.path('alt-aac/' + device.img);
@@ -236,18 +236,18 @@ SweetSuite.User = DS.Model.extend({
     return notifs;
   }),
   online: computed('last_ws_access', function() {
-    SweetSuite.User.ws_accesses = SweetSuite.User.ws_accesses || {};
+    LingoLinqAAC.User.ws_accesses = LingoLinqAAC.User.ws_accesses || {};
     var last_access = this.get('last_ws_access');
     if(!last_access) {
       var _this = this;
-      if(SweetSuite.User.ws_accesses[this.get('id')]) {
-        last_access = SweetSuite.User.ws_accesses[this.get('id')];
+      if(LingoLinqAAC.User.ws_accesses[this.get('id')]) {
+        last_access = LingoLinqAAC.User.ws_accesses[this.get('id')];
         runLater(function() {
-          _this.set('last_ws_access', SweetSuite.User.ws_accesses[_this.get('id')]);
+          _this.set('last_ws_access', LingoLinqAAC.User.ws_accesses[_this.get('id')]);
         }, 50)
       }
     } else {
-      SweetSuite.User.ws_accesses[this.get('id')] = Math.max(SweetSuite.User.ws_accesses[this.get('id')] || 0, this.get('last_ws_access'));
+      LingoLinqAAC.User.ws_accesses[this.get('id')] = Math.max(LingoLinqAAC.User.ws_accesses[this.get('id')] || 0, this.get('last_ws_access'));
     }
     return last_access > (((new Date()).getTime() - (5 * 60 * 1000)) / 1000);
   }),
@@ -595,7 +595,7 @@ SweetSuite.User = DS.Model.extend({
     this.set('checked_for_data_url', true);
     var url = this.get('avatar_url_with_fallback');
     var _this = this;
-    if(!this.get('avatar_data_uri') && SweetSuite.remote_url(url)) {
+    if(!this.get('avatar_data_uri') && LingoLinqAAC.remote_url(url)) {
       return persistence.find_url(url, 'image').then(function(data_uri) {
         _this.set('avatar_data_uri', data_uri);
         return _this;
@@ -698,7 +698,7 @@ SweetSuite.User = DS.Model.extend({
     var _this = this;
     var localize_connections = function(sups) {
       (sups || []).forEach(function(sup) {
-        if(SweetSuite.remote_url(sup.avatar_url)) {
+        if(LingoLinqAAC.remote_url(sup.avatar_url)) {
           persistence.find_url(sup.avatar_url, 'image').then(function(uri) {
             emberSet(sup, 'original_avatar_url', sup.avatar_url);
             emberSet(sup, 'avatar_url', uri);
@@ -760,10 +760,10 @@ SweetSuite.User = DS.Model.extend({
   }),
   known_supervisees: computed('all_supervisees', 'supervisees', function() {
     var res = this.get('all_supervisees') || this.get('supervisees') || [];
-    SweetSuite.User.ws_accesses = SweetSuite.User.ws_accesses || {};
+    LingoLinqAAC.User.ws_accesses = LingoLinqAAC.User.ws_accesses || {};
     var cutoff = ((new Date()).getTime() - (10 * 60 * 1000)) / 1000;
     res.forEach(function(sup) {
-      if(SweetSuite.User.ws_accesses[emberGet(sup, 'id')] > cutoff) {
+      if(LingoLinqAAC.User.ws_accesses[emberGet(sup, 'id')] > cutoff) {
         emberSet(sup, 'online', true);          
       }  
     });
@@ -835,7 +835,7 @@ SweetSuite.User = DS.Model.extend({
     var promises = [];
     var list = [];
     ids.forEach(function(id, idx) {
-      promises.push(SweetSuite.Buttonset.load_button_set(id).then(function(bs) {
+      promises.push(LingoLinqAAC.Buttonset.load_button_set(id).then(function(bs) {
         list[idx] = bs;
       }));
     });
@@ -850,7 +850,7 @@ SweetSuite.User = DS.Model.extend({
     var _this = this;
     if(this.get('permissions.supervise')) {
       _this.set('integrations', {loading: true});
-      res = SweetSuite.User.check_integrations(this.get('id'), reload);
+      res = LingoLinqAAC.User.check_integrations(this.get('id'), reload);
     } else {
       res = RSVP.reject({error: 'not allowed'});
     }
@@ -864,13 +864,13 @@ SweetSuite.User = DS.Model.extend({
     return res;
   },
   find_integration: function(key, supervisee_user_name) {
-    var search_user = SweetSuite.User.find_integration(this.get('id'), key);
+    var search_user = LingoLinqAAC.User.find_integration(this.get('id'), key);
     var user = this;
     var supervisee_fallback = search_user.then(null, function(err) {
       if(err.error == 'no matching integration found' && supervisee_user_name) {
         var sup = (user.get('supervisees') || []).find(function(sup) { return sup.user_id == supervisee_user_name || sup.user_name == supervisee_user_name });
         if(sup) {
-          return SweetSuite.User.find_integration(sup.user_id || sup.user_name, key);
+          return LingoLinqAAC.User.find_integration(sup.user_id || sup.user_name, key);
         } else {
           return RSVP.reject({error: 'no matching integration found for user or board author'});
         }
@@ -915,7 +915,7 @@ SweetSuite.User = DS.Model.extend({
     var preferred_symbols = user.get('preferences.preferred_symbols') || 'original';
     var copy_promise = new RSVP.Promise(function(resolve, reject) {
       user.set('home_board_pending', board_key);
-      SweetSuite.store.findRecord('board', board_id).then(function(board) {
+      LingoLinqAAC.store.findRecord('board', board_id).then(function(board) {
         var swap_library = null;
         if(swap_images && preferred_symbols && preferred_symbols != 'original') { swap_library = user.get('preferences.preferred_symbols'); }
         user.set('copy_level', home_level);
@@ -955,20 +955,20 @@ SweetSuite.User = DS.Model.extend({
       // ensure you're online
       if(persistence.get('online')) {
         // retrieve all locally-saved boards
-        return sweetSuiteExtras.storage.find_all('board').then(function(list) {
+        return lingoLinqExtras.storage.find_all('board').then(function(list) {
           var promises = [];
           list.forEach(function(item) {
             // filter to only those owned by the current user
             if(item.data && item.data.raw && item.data.raw.user_name == user_name) {
               // load each local copy and call .save to PUT the local version
-              var existing = SweetSuite.store.peekRecord('board', item.data.raw.id);
+              var existing = LingoLinqAAC.store.peekRecord('board', item.data.raw.id);
               if(!existing) {
                 var json_api = { data: {
                   id: item.data.raw.id,
                   type: 'board',
                   attributes: item.data.raw
                 }};
-                existing = SweetSuite.store.push(json_api);
+                existing = LingoLinqAAC.store.push(json_api);
               }
               for(var key in item.data.raw) {
                 existing.set(key, item.data.raw[key]);
@@ -998,7 +998,7 @@ SweetSuite.User = DS.Model.extend({
     var board_id = user.get('preferences.home_board.id');
     var swap_library = user.get('preferences.preferred_symbols')
     var defer = RSVP.defer();
-    var find = SweetSuite.store.findRecord('board', board_id).then(function(board) {
+    var find = LingoLinqAAC.store.findRecord('board', board_id).then(function(board) {
       defer.ready_to_swap = function(board_id) {
         var err = function() {
           modal.error(i18n.t('error_swapping_images', "There was an unexpected error when trying to update your home board's symbol library"));
@@ -1154,15 +1154,15 @@ SweetSuite.User = DS.Model.extend({
     });
   }
 });
-SweetSuite.User.integrations_for = {};
-SweetSuite.User.find_integration = function(user_name, key) {
-  var integrations_for = SweetSuite.User.integrations_for;
+LingoLinqAAC.User.integrations_for = {};
+LingoLinqAAC.User.find_integration = function(user_name, key) {
+  var integrations_for = LingoLinqAAC.User.integrations_for;
   var loading = integrations_for[user_name] && integrations_for[user_name].promise;
   if(!loading) {
     if(integrations_for[user_name] && integrations_for[user_name].length) {
       loading = RSVP.resolve(integrations_for[user_name]);
     } else {
-      loading = SweetSuite.User.check_integrations(user_name);
+      loading = LingoLinqAAC.User.check_integrations(user_name);
     }
   }
   return loading.then(function(list) {
