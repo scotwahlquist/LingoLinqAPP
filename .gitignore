@@ -32,3 +32,10 @@
 /lib/domains.json
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+.env
+
+
+# Development tools (keep context files for contributors)
+tools/deepwiki-mcp/node_modules/
+tools/deepwiki-mcp/dist/
+.vscode/
