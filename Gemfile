@@ -21,6 +21,9 @@ gem 'concurrent-ruby', '1.3.4'
 
 # Rails 5.2 doesn't seem to work on heroku with octopus :-/
 gem 'rails', '6.1' # TODO: upgrade to 7.2
+gem 'mimemagic', '~> 0.3.10'
+
+
 gem 'pg' #, '0.19.0' #, '>=1.1.3'
 gem 'sass-rails'
 gem 'uglifier', '>= 1.3.0'
@@ -60,6 +63,8 @@ gem 'rotp'
 gem 'sinatra'
 gem 'sanitize'
 
+
+
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
@@ -79,4 +84,7 @@ end
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
 
-ruby "3.2.2"
+ruby "3.2.8"
+
+
+
