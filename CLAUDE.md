@@ -2,142 +2,111 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Architecture
+## Common Development Commands
 
-LingoLinq AAC is an open-source web-based Augmentative and Alternative Communication (AAC) application with a dual-framework architecture:
+### Setup and Development
+- `bundle install` - Install Ruby dependencies
+- `rails extras:assert_js` - Setup symbolic links for JavaScript files (run before database setup)
+- `rails db:create && rails db:migrate && rails db:seed` - Setup database (seed creates example/password login)
+- `foreman start` or `heroku local` - Start all processes (web, resque workers, ember)
+- `rails server` - Start Rails server only (port 3000)
+- `cd app/frontend && ember serve` - Start Ember development server (port 8181)
 
-- **Backend**: Ruby on Rails 6.1 (goal: upgrade to 7.2) with PostgreSQL and Redis
-- **Frontend**: Ember.js ~3.12.0 application located in `app/frontend/`
-- **Communication**: REST API between frontend and backend
-- **Deployment**: Heroku-ready with Procfile configuration
+### Frontend Development (Ember.js)
+- `cd app/frontend && npm install && bower install` - Install frontend dependencies
+- `cd app/frontend && ember build` - Build frontend assets
+- `cd app/frontend && ember test` - Run frontend tests
+- `cd app/frontend && ember serve --port 8181` - Development server with auto-reload
 
-## Development Commands
+### Testing
+- `rspec` - Run Ruby/Rails tests
+- `cd app/frontend && ember test` - Run Ember tests
+- Tests are located in `spec/` for Ruby and `app/frontend/tests/` for Ember
 
-### Backend Commands (Rails)
-```bash
-# Setup
-bundle install
-rails extras:assert_js          # Fix symbolic links
-rails db:create
-rails db:migrate
-rails db:seed                   # Optional: adds example/password login
+### Background Jobs
+- `env QUEUES=priority,default,slow INTERVAL=0.1 TERM_CHILD=1 bundle exec rake environment resque:work` - Run background workers
+- `rake extras:jobs_list` - View scheduled background jobs
+- Jobs are processed using Resque with Redis
 
-# Development
-rails server                    # Start Rails server (port 3000)
-rails console                   # Local console
-bin/heroku_console             # Production console (audited)
+### Deployment and Assets
+- `bin/deploy_prep` - Precompile assets for deployment
+- `rake extras:mobile` - Prepare mobile app releases
+- `rake extras:desktop` - Prepare desktop app releases
+- `rake extras:version` - Update application version
 
-# Testing
-rspec                          # Run Ruby tests
-bundle exec guard              # Watch mode for tests
-```
+## Architecture Overview
 
-### Frontend Commands (Ember)
-```bash
-cd app/frontend
-npm install
-bower install                  # Legacy dependency manager
-ember serve                    # Development server
-ember build                    # Production build
-ember test                     # Run tests
-```
+### Multi-Framework Structure
+LingoLinq AAC is a complex application with a **Rails backend** (`/`) and **Ember.js frontend** (`/app/frontend`), designed as a cloud-based AAC (Augmentative and Alternative Communication) system.
 
-### Full System
-```bash
-gem install foreman
-foreman start                  # Runs all processes from Procfile
-# or
-heroku local                   # Alternative with heroku-cli
-```
+### Backend (Rails)
+- **Models**: Located in `app/models/`, with key models being `User`, `Board`, `Organization`, `LogSession`  
+- **Controllers**: Split between web controllers (`app/controllers/`) and API controllers (`app/controllers/api/`)
+- **API**: RESTful API at `/api/v1/` that serves both web frontend and mobile apps
+- **Background Jobs**: Uses Resque with Redis for async processing (log analysis, file processing, notifications)
+- **Database**: PostgreSQL with migrations in `db/migrate/`
 
-### Deployment Preparation
-```bash
-bin/deploy_prep               # Precompile assets
-rake extras:mobile            # Prep mobile releases
-rake extras:desktop           # Prep desktop releases
-```
+### Frontend (Ember.js)
+- **Location**: `app/frontend/` directory contains complete Ember app
+- **Components**: Modular UI components in `app/frontend/app/components/`
+- **Routes**: Ember routes handle client-side navigation
+- **Build**: Ember CLI builds assets to `app/frontend/dist/assets/` which are symlinked to Rails assets
 
-## Key Technical Constraints
+### Key Architectural Patterns
+- **API-First**: All frontend-backend communication goes through documented JSON API
+- **Offline Support**: Extensive caching and offline capabilities using IndexedDB and Application Cache
+- **Multi-Platform**: Same codebase serves web, mobile (Cordova), and desktop (Electron) apps
+- **Real-time**: WebSocket integration for live collaboration and status updates
+- **Internationalization**: Full i18n support with translations in `public/locales/`
 
-### Internationalization (i18n)
-- **CRITICAL**: All user-facing strings must use i18n helpers
-- Template: `{{t "key" key="translation_key"}}`
-- JavaScript: `i18n.t('key', "fallback string")`
-- **Convention**: Double quotes for user-facing strings, single quotes for everything else
-- Translation management: `i18n_generator.rb`
+### Data Flow
+1. Ember frontend makes API calls to Rails backend
+2. Rails processes requests, often queuing background jobs
+3. Background workers (Resque) handle heavy processing
+4. Real-time updates pushed via WebSockets
+5. Offline changes sync when connectivity restored
 
-### Multi-Platform Support
-- Code runs as: web app, mobile app (Cordova), desktop app (Electron)
-- Platform-specific code must use `capabilities` library
-- Feature flags required for new user-facing features (`lib/feature_flags.rb`)
+### External Integrations
+- **AWS Services**: S3 (file storage), SES (email), SNS (notifications), Elastic Transcoder (media)
+- **Third-party APIs**: Google (Places, Translate, Maps), Stripe (payments), various symbol libraries
+- **Symbol Sources**: OpenSymbols.org, LessonPix, PCS symbols for AAC boards
 
-### Code Style
-- Backend: Ruby/Rails conventions
-- Frontend: Ember.js conventions with ES6+
-- No hardcoded text strings in user interfaces
-- Use Feature Flags for beta features and UI changes
+## Development Guidelines
 
-## Architecture Components
+### Code Conventions
+- **String Quotes**: Double quotes for user-facing strings, single quotes for everything else
+- **Internationalization**: Always use `i18n.t('key', "string")` in controllers and `{{t "string" key='key'}}` in templates
+- **Feature Flags**: New features must be behind feature flags in `lib/feature_flags.rb`
+- **API Responses**: Use JSON API serializers in `lib/json_api/`
 
-### Backend Key Directories
-- `app/models/concerns/` - Shared model behaviors (async, caching, permissions, etc.)
-- `app/controllers/api/` - API endpoints
-- `lib/json_api/` - API response serializers
-- `lib/converters/` - Import/export functionality (OBF, PDF, PNG, etc.)
-- `config/initializers/` - App configuration
+### File Organization
+- **Rails**: Follow standard Rails conventions
+- **Ember**: Components in `app/frontend/app/components/`, routes in `app/frontend/app/routes/`
+- **Specs**: Ruby tests in `spec/`, Ember tests in `app/frontend/tests/`
+- **Lib**: Shared utilities and converters in `lib/`
 
-### Frontend Key Directories
-- `app/frontend/app/` - Ember application code
-- `app/frontend/config/` - Build configuration
-- `app/frontend/tests/` - Frontend test suite
+### Environment Setup
+- **Required**: Ruby 3.2.8, Node.js, PostgreSQL, Redis, Ember CLI
+- **Optional**: ImageMagick, Ghostscript for file processing
+- **Environment**: Copy `.env.example` to `.env` and configure required variables
+- **Dependencies**: AWS credentials needed for file uploads, various API keys for full functionality
 
-### Database
-- Primary: PostgreSQL with `pg_search` for full-text search
-- Cache: Redis for sessions, jobs, and caching
-- Background Jobs: Resque queue system
-- Auditing: All production console access audited via `AuditEvent`
+### Testing Strategy
+- **Backend**: RSpec tests cover models, controllers, and lib files
+- **Frontend**: Ember QUnit tests for components and routes
+- **Integration**: API tests ensure frontend-backend compatibility
+- **Performance**: Background job processing and caching are critical
 
-## External Dependencies
+### Background Processing
+Key recurring tasks that run via Heroku Scheduler:
+- `rake check_for_expiring_subscriptions` (daily)
+- `rake generate_log_summaries` (hourly)  
+- `rake push_remote_logs` (hourly)
+- `rake advance_goals` (hourly)
+- `rake flush_users` (daily)
 
-### Required Services
-- **Redis**: Required for development and production
-- **PostgreSQL**: Primary database
-- **Node.js**: Frontend build process
-- **ImageMagick**: Image processing (`convert`, `identify`, `montage`)
-- **Ghostscript**: PDF generation (`gs`)
-
-### Optional Integrations (see `.env.example`)
-- AWS services: S3, SES, SNS, Elastic Transcoder
-- Google APIs: Places, Translate, Maps, TTS
-- External: Bugsnag, New Relic, Stripe, ZenDesk
-
-## Scheduled Tasks (Production)
-```bash
-# Heroku Scheduler tasks
-rake check_for_expiring_subscriptions # daily
-rake generate_log_summaries           # hourly
-rake push_remote_logs                 # hourly
-rake check_for_log_mergers           # hourly
-rake advance_goals                   # hourly
-rake transcode_errored_records       # daily
-rake flush_users                     # daily
-rake clean_old_deleted_boards        # daily
-```
-
-## Data Format Standards
-- Boards use Open Board Format (OBF) - see http://www.openboardformat.org
-- Export/import maintains cross-platform compatibility
-- API follows JSON API specification patterns
-
-## Development Workflow
-1. Changes require internationalization for user-facing features
-2. New features should be feature-flagged initially
-3. Platform compatibility must be maintained (web/mobile/desktop)
-4. API changes should maintain backward compatibility
-5. Database changes require migrations
-
-## Testing Strategy
-- Backend: RSpec test suite
-- Frontend: Ember QUnit tests
-- Console access in production requires audit logging
-- Use `Worker.method_stats(queue_name)` for background job monitoring
+### Multi-Platform Considerations
+- **Capabilities**: Use `capabilities` library to detect platform features
+- **Mobile**: Cordova apps in separate repos, assets copied via rake tasks
+- **Desktop**: Electron apps with auto-update capabilities
+- **Web**: Progressive Web App features for offline use

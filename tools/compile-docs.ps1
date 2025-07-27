@@ -1,6 +1,3 @@
-# compile-docs.ps1
-# Repo-aware: pulls from gemini_reports, outputs to docs, formats with frontmatter and TOC
-
 $reportDir = "gemini_reports"
 $outputFile = "docs/summary-all.md"
 
@@ -14,11 +11,10 @@ use_cases: ["Investor Pitch", "Dev Hand-off"]
 ---
 "@
 
-$tocHeader = "## 📚 Table of Contents`n"
+$files = Get-ChildItem "$reportDir" -Filter "*.md" | Sort-Object Name
+$tocHeader = "## Table of Contents`n"
 $toc = ""
 $content = ""
-
-$files = Get-ChildItem -Path $reportDir -Filter *.md | Sort-Object Name
 
 foreach ($file in $files) {
     $name = ($file.BaseName -replace '^\d+-', '') -replace '-', ' '
