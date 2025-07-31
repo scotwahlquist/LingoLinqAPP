@@ -232,7 +232,7 @@ are created or modified, to automatically colorize by parts of speech, and to
 generate inflections for buttons, contractions, and for auto-inflection preferences
 (i.e. when a user hits "I want" and then "eat" automatically changes to "to eat").
 There are two separate file types, rules.json and words.json, which both have templates
-available at [https://tools.openaac.org/inflections/inflections.html](OpenAAC).
+available at [OpenAAC](https://tools.openaac.org/inflections/inflections.html).
 
 ##### Troubleshooting
 
@@ -268,13 +268,13 @@ See also CODE_INVESTIGATION.md
 LingoLinq AAC is an actively-developed system with an API-driven Rails backend and
 a rather heavy Ember frontend. This can be intimidating, even for people
 who know these frameworks, and prevent people from contributing. If you
-would like to contribute, you can join the [<https://www.openaac.org](OpenAAC> Slack Channel)
+would like to contribute, you can join the [OpenAAC Slack Channel](https://www.openaac.org)
 and ask for ideas or pointers. In addition, here are some fairly modular
 components that I haven't had time to develop, and would love a contribution
 on:
 
-- Dynamic Scene Displays framework to build photo-based interfaces for activating objects on a scene (consider using [<https://github.com/CoughDrop/aac_shim](aac_shim>)
-- External API Integrations (recent news, movie tickets, etc.) (consider using [<https://github.com/CoughDrop/aac_shim](aac_shim>)
+- Dynamic Scene Displays framework to build photo-based interfaces for activating objects on a scene (consider using [aac_shim](https://github.com/CoughDrop/aac_shim))
+- External API Integrations (recent news, movie tickets, etc.) (consider using [aac_shim](https://github.com/CoughDrop/aac_shim))
 - Core word service to return information on a word including most common part of speech, common variations/tenses, etc.
 - Make mobile/desktop apps able to download the latest version of the javascript code, so
 the apps can be updated dynamically when all that's changed is the scripts
@@ -293,7 +293,7 @@ I'm happy to provide guidance for any of these projects to help get them underwa
 
 ### License
 
-Copyright (C) 2014-2025 CoughDrop & OpenAAC, Inc.
+Copyright (C) 2014-2025 LingoLinq AAC & OpenAAC, Inc.
 
 Released under the AGPLv3 license or later.
 
@@ -307,31 +307,6 @@ Released under the AGPLv3 license or later.
   - `docs/architecture/` - Architecture decisions and plans
 - `tools/` - Development tools and utilities
   - `tools/ai-context/` - Context files for AI development assistants
-  - `tools/deepwiki-mcp/` - Documentation aggregation tool
-
-## AI-Assisted Development
-This project leverages AI assistants for development tasks.
-See `tools/ai-context/` for context files that help AI assistants
-understand the project structure and goals without scanning the entire codebase.
-
-**For Contributors**: Start AI sessions with 'Read tools/ai-context/ first'
-
----
-
-## Repository Structure
-- `app/` - Main Rails application code
-- `docs/` - User and developer documentation
-- `project-context/` - **Project understanding and context**
-  - `ai-agents/` - Context files for AI development assistants
-  - `tools/` - Development tools and utilities
-
-## 🤖 AI-Assisted Development
-This project uses AI assistants for development. **New contributors and AI assistants**
-should start by reading files in `project-context/ai-agents/` for instant project understanding.
-
-**Quick Start for AI Sessions**: 'Read all files in project-context/ai-agents/ first'
-
----
 
 ## 🤖 AI-Assisted Development
 
@@ -347,7 +322,4 @@ Read all files in tools/ai-context/ to understand this LingoLinq project first
 - `tools/ai-context/TEAM_WORKFLOW.md` - AI agent coordination
 - `tools/ai-context/roles/` - Role-specific context for specialized agents
 
-### Repository Structure
-- `app/` - Rails application code
-- `docs/` - Project documentation
-- `tools/` - Development tools and AI context
+**For Contributors**: Start AI sessions with the command above to get instant project understanding.

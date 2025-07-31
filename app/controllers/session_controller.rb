@@ -257,10 +257,10 @@ class SessionController < ApplicationController
       uiinf = Nokogiri::XML::Node.new('mdui:UIInfo', xml)
       dn = Nokogiri::XML::Node.new('mdui:DisplayName', xml)
       dn['xml:lang'] = 'en'
-      dn.content = "CoughDrop"
+      dn.content = "LingoLinq AAC"
       desc = Nokogiri::XML::Node.new('mdui:Description', xml)
       desc['xml:lang'] = 'en'
-      desc.content = "CoughDrop AAC Application"
+      desc.content = "LingoLinq AAC Application"
       logo = Nokogiri::XML::Node.new('mdui:Logo', xml)
       logo['xml:lang'] = 'en'
       logo['width'] = '64'
@@ -515,7 +515,7 @@ class SessionController < ApplicationController
         # generated based on request headers
         device_key = request.headers['X-Device-Id'] || params['device_id'] || 'default'
         
-        installed_app = request.headers['X-INSTALLED-COUGHDROP'] == 'true' || params['installed_app'] == 'true'
+        installed_app = request.headers['X-INSTALLED-LINGOLINQ'] == 'true' || params['installed_app'] == 'true'
         d = Device.find_or_create_by(:user_id => u.id, :developer_key_id => 0, :device_key => device_key)
         assert_session_device(d, u, installed_app)
 
@@ -615,7 +615,7 @@ class SessionController < ApplicationController
     d.settings['system'] ||= params['system']
     d.settings['system_version'] ||= params['system_version']
     d.settings['mobile'] = params['mobile'] == 'true' if params['mobile'] != nil
-    d.settings['browser'] = true if request.headers['X-INSTALLED-COUGHDROP'] == 'false'
+    d.settings['browser'] = true if request.headers['X-INSTALLED-LINGOLINQ'] == 'false'
     long_token = params['long_token'] && params['long_token'] != 'false'
     if installed_app
       long_token = true

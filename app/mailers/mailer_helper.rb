@@ -4,11 +4,11 @@ module MailerHelper
   end
 
   def app_name
-    JsonApi::Json.current_domain['settings']['app_name'] || 'CoughDrop'
+    JsonApi::Json.current_domain['settings']['app_name'] || 'LingoLinq AAC'
   end
 
   def company_name
-    JsonApi::Json.current_domain['settings']['company_name'] || 'CoughDrop'
+    JsonApi::Json.current_domain['settings']['company_name'] || 'LingoLinq AAC'
   end
 
   def support_url

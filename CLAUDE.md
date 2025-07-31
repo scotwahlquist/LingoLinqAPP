@@ -87,6 +87,7 @@ LingoLinq AAC is a complex application with a **Rails backend** (`/`) and **Embe
 
 ### Environment Setup
 - **Required**: Ruby 3.2.8, Node.js, PostgreSQL, Redis, Ember CLI
+- **CRITICAL**: Ruby version MUST be 3.2.8 for Rails 6.1 compatibility - DO NOT update Gemfile to newer Ruby versions
 - **Optional**: ImageMagick, Ghostscript for file processing
 - **Environment**: Copy `.env.example` to `.env` and configure required variables
 - **Dependencies**: AWS credentials needed for file uploads, various API keys for full functionality
@@ -110,3 +111,36 @@ Key recurring tasks that run via Heroku Scheduler:
 - **Mobile**: Cordova apps in separate repos, assets copied via rake tasks
 - **Desktop**: Electron apps with auto-update capabilities
 - **Web**: Progressive Web App features for offline use
+
+## Additional Key Information
+
+### Linting and Code Quality
+- Frontend uses ESLint and Ember Template Lint (configured in `app/frontend/`)
+- Run `cd app/frontend && npm run lint:js` for JavaScript linting
+- Run `cd app/frontend && npm run lint:hbs` for template linting
+
+### Rails Application Name
+- The Rails application is named `Coughdrop` (see `config/application.rb`)
+- Module references use `Coughdrop::Application`
+- **Note**: User-facing branding is "LingoLinq AAC" but internal Rails app name remains "Coughdrop"
+
+### API Headers (Post-Cleanup)
+- **Version Header**: Use `X-LingoLinq-Version` (consistent across frontend/backend)
+- **App Installation**: Use `X-INSTALLED-LINGOLINQ` (not `X-INSTALLED-COUGHDROP`)
+- **Critical**: Ensure header consistency between Ember frontend and Rails backend
+
+### Process Management
+- Uses Procfile for process definitions (web, resque workers, ember development)
+- Background job queues: `priority`, `default`, `slow`, `whenever`
+- Resque workers handle async processing with different queue priorities
+
+### Security and Permissions
+- Implements comprehensive permission system via concerns in `app/models/concerns/`
+- Uses secure serialization and encryption for sensitive data
+- Console access requires auditing (use `bin/heroku_console` for production)
+
+### Development Workflow
+- Feature flags in `lib/feature_flags.rb` control new feature rollout
+- All user-facing strings must use i18n for internationalization
+- Double quotes for user-facing strings, single quotes for everything else
+- JSON API serializers handle all API responses consistently

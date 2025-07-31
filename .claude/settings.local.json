@@ -3,7 +3,9 @@
     "allow": [
       "Bash(find:*)",
       "Bash(git merge:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git push:*)",
+      "Bash(git branch:*)"
     ],
     "deny": []
   }

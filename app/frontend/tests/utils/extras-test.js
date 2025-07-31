@@ -125,7 +125,7 @@ describe('extras', function() {
 //           options.headers = options.headers || {};
 //           options.headers['Authorization'] = "Bearer " + capabilities.access_token;
 //           options.headers['X-Device-Id'] = device_id;
-//           options.headers['X-LingoLinq-AAC-Version'] = window.LingoLinqAAC.VERSION;
+//           options.headers['X-LingoLinq-Version'] = window.LingoLinqAAC.VERSION;
 //         }
 //         if(LingoLinqAAC.protected_user || stashes.get('protected_user')) {
 //           options.headers = options.headers || {};
