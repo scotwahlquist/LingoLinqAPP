@@ -49,7 +49,7 @@ embarrass me too much -- ...I mean, hopefully you'll be able to pick up pretty q
 the basic makeup of the app. These notes are not comprehensive, Feel free to help
 me flesh them out if that's your thing.
 
-The frontend and backend communicate via the open and completely-undocumented API (sorry).
+The frontend and backend communicate via a comprehensive JSON API documented in [API_DOCUMENTATION.md](./API_DOCUMENTATION.md).
 By only using the open API, the mobile apps can easily maintain feature parity
 (and shared codebase) with the web version.
 
@@ -278,7 +278,7 @@ on:
 - Core word service to return information on a word including most common part of speech, common variations/tenses, etc.
 - Make mobile/desktop apps able to download the latest version of the javascript code, so
 the apps can be updated dynamically when all that's changed is the scripts
-- API documentation (yeah I know, I should have done it along the way)
+- ✅ API documentation - **COMPLETED**: See [API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
 - Maintenance Work:
 - Upgrade Rails & Ruby (and ensure everything still works, then bump to latest Heroku stack)
   - For LingoLinq AAC, CoughDrop-Websocket, presenters.aacconference.com
@@ -321,5 +321,11 @@ Read all files in tools/ai-context/ to understand this LingoLinq project first
 - `tools/ai-context/MODERNIZATION_ROADMAP.md` - Development priorities
 - `tools/ai-context/TEAM_WORKFLOW.md` - AI agent coordination
 - `tools/ai-context/roles/` - Role-specific context for specialized agents
+
+### Key Documentation
+- **[CLAUDE.md](./CLAUDE.md)** - Development guide for Claude Code sessions
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** - Comprehensive API reference
+- **[SENIOR_DEV_ROADMAP.md](./SENIOR_DEV_ROADMAP.md)** - Strategic development roadmap
+- **[CLEANUP.md](./CLEANUP.md)** - Post-merge cleanup documentation
 
 **For Contributors**: Start AI sessions with the command above to get instant project understanding.
