@@ -54,7 +54,7 @@ gem 'rack-timeout'
 gem 'pg_search'
 gem 'silencer'
 gem 'go_secure'
-gem 'permissable-lingolinq'
+# gem 'permissable-lingolinq'  # TODO: This gem is not available - needs to be addressed
 gem 'boy_band'
 gem 'ttfunk', '1.7'
 gem 'ruby-saml'
