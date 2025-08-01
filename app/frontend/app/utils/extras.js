@@ -208,11 +208,11 @@ import app_state from './app_state';
           options.url = capabilities.api_host + options.url;
         }
         options.headers = options.headers || {};
-        options.headers['X-INSTALLED-COUGHDROP'] = (!!capabilities.installed_app).toString();
+        options.headers['X-INSTALLED-LINGOLINQ'] = (!!capabilities.installed_app).toString();
         if(capabilities.access_token) {
           options.headers['Authorization'] = "Bearer " + capabilities.access_token;
           options.headers['X-Device-Id'] = capabilities.device_id();
-          options.headers['X-LingoLinq-AAC-Version'] = window.LingoLinqAAC.VERSION;
+          options.headers['X-LingoLinq-Version'] = window.LingoLinqAAC.VERSION;
         }
         if(SweetSuite.protected_user || stashes.get('protected_user')) {
           options.headers['X-SILENCE-LOGGER'] = 'true';

@@ -1,11 +1,15 @@
-# CLAUDE.md
+# GEMINI.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Gemini CLI when working with code in this repository.
+
+## Project Overview
+
+LingoLinq AAC is a complex Rails + Ember.js application designed as a cloud-based AAC (Augmentative and Alternative Communication) system for people with complex communication needs.
 
 ## Common Development Commands
 
 ### Setup and Development
-- `bundle install` - Install Ruby dependencies
+- `bundle install` - Install Ruby dependencies (Ruby 3.2.8 REQUIRED)
 - `rails extras:assert_js` - Setup symbolic links for JavaScript files (run before database setup)
 - `rails db:create && rails db:migrate && rails db:seed` - Setup database (seed creates example/password login)
 - `foreman start` or `heroku local` - Start all processes (web, resque workers, ember)
@@ -144,3 +148,44 @@ Key recurring tasks that run via Heroku Scheduler:
 - All user-facing strings must use i18n for internationalization
 - Double quotes for user-facing strings, single quotes for everything else
 - JSON API serializers handle all API responses consistently
+
+## Recent Changes (Post-Cleanup by Senior Dev)
+
+### Branding Consistency Fixed
+- All API headers now use consistent LingoLinq branding
+- Fixed mixed header references that could cause authentication issues
+- Updated user-facing strings while preserving technical class names
+
+### Critical Environment Notes
+- **Ruby Version**: System MUST use Ruby 3.2.8 for Rails 6.1 compatibility
+- **Gemfile**: DO NOT update Ruby version in Gemfile - this will break Rails compatibility
+- **Local Environment**: If you have Ruby 3.3.x locally, you need to downgrade or use version manager
+
+### Code Quality Standards
+- Follow existing patterns for new code
+- Use feature flags for new functionality
+- Maintain API compatibility
+- Always test both frontend and backend when making changes
+- Ensure i18n for all user-facing strings
+
+## Troubleshooting Common Issues
+
+### Bundle Install Fails
+- Check Ruby version: `ruby -v` (should be 3.2.8)
+- Ensure PostgreSQL and Redis are running
+- Check `.env` file exists and is configured
+
+### Frontend Build Issues
+- Run `cd app/frontend && npm install && bower install`
+- Check Node.js version compatibility
+- Clear `app/frontend/tmp` directory if needed
+
+### API Authentication Issues
+- Verify headers are using correct LingoLinq format
+- Check frontend/backend header consistency
+- Review recent API changes in CLEANUP.md
+
+### Background Jobs Not Processing
+- Ensure Redis is running
+- Check Resque workers are started
+- Review queue configurations in Procfile

@@ -2083,7 +2083,7 @@ class Board < ActiveRecord::Base
         buttons = swap_board.buttons.map do |button|
           # skip buttons that don't currently have an image
           next button unless button['image_id']
-          next button if button['label'] && button['label'].match(/CoughDrop/)
+          next button if button['label'] && button['label'].match(/LingoLinq/)
           old_bi = bis.detect{|i| i.global_id == button['image_id'] }
           # skip buttons that have manually-uploaded image
           if old_bi && old_bi.url && old_bi.url.match(/coughdrop-usercontent/)
